@@ -1,0 +1,153 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\Company; 
+use App\Http\Requests\ProductRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class ProductController extends Controller
+
+{
+        /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    public function showList(Request $request) {
+
+        $product = new Product();
+        $company = new Company();
+        
+        $products = $product->getList();
+        $companies = $company->getListcompany();
+
+        return view('product_list', compact('products','companies'));
+
+    }
+
+    
+    public function showRegistForm() {
+        $companies = Company::all();
+        return view('product_regist', ['companies' => $companies]);
+    }
+
+    // 新規登録
+    public function registSubmit(ProductRequest $request) {
+        
+        //①画像ファイルの取得
+	    $image = $request->file('image');
+        
+        //②画像ファイルのファイル名を取得
+        $file_name = $image->getClientOriginalName();
+        
+        //③storage/app/public/imagesフォルダ内に、取得したファイル名で保存
+        $image->storeAs('public/images', $file_name);
+        
+        //④データベース登録用に、ファイルパスを作成
+        $image_path = 'storage/images/' . $file_name;
+        
+        $model = new Product();
+        
+        // トランザクション開始
+        DB::beginTransaction();
+        
+        try {
+            // 登録処理呼び出し
+            $model->registProduct($request, $image_path);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back();
+        }
+    
+        // 処理が完了したらregistにリダイレクト
+        return redirect(route('products.regist'));
+    }
+    
+    // 詳細ボタン押下時
+    public function show($id) {
+        $product = Product::find($id);
+
+        $companies = Company::all();
+
+        return view('product_show', compact('product','companies'));
+    }
+    
+    // 編集ボタン押下時
+    public function edit($id) {
+        $product = Product::find($id);
+
+        $companies = Company::all();
+
+        return view('product_edit', compact('product', 'companies'));
+    }
+
+   
+        // 更新
+        public function update($id, ProductRequest $request){
+        $companies = Company::all();
+
+        $product = Product::find($id);
+    
+        $image = $request->file('image');
+
+        $file_name = $image->getClientOriginalName();
+
+        $image->storeAs('public/images', $file_name);
+
+        $image_path = 'storage/images/' . $file_name;
+
+        $model = new Product();
+            
+        // $product = $model->updateProduct($request, $id, $image_path);
+
+
+        Product::where('id', $id)->update([
+
+        'product_name' => $request->product_name,
+        'img_path' => $image_path,
+        'price' => $request->price,
+        'stock' => $request->stock,
+        'company_id' => $request->company_id,
+        'comment' => $request->comment
+        
+    ]);
+    
+        return view('product_edit', compact('product', 'companies'));
+
+    }
+
+        // 検索機能
+
+        public function search(Request $request) {
+
+            $keyword = $request->input('keyword');
+
+            $product = new Product();
+    
+            $products = $product->SearchList($keyword);
+           
+    
+            return view('product_list', compact('products'));
+
+        }
+    
+    // 削除機能
+    public function destroy(Product $product) {
+        $companies = Company::all();
+        
+        $product->delete();
+        return redirect()->route('products.list');
+            // ->with('success','削除しました');
+    }
+    
+}

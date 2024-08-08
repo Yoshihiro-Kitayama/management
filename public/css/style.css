@@ -1,0 +1,46 @@
+
+.info {
+    font-size:1.75rem;
+}
+
+.info2 {
+    font-size:1.75rem;
+    text-align: center;
+}
+
+.search_product {
+    margin-left:20px;
+}
+
+#product {
+    border:1px solid black;
+    padding: 20px;
+}
+
+tr ,td {
+    text-align: center;
+    vertical-align:middle;
+}
+
+label {
+    display: inline-block;
+    width: 150px;
+    vertical-align: top;
+}
+
+span {
+    color:red;
+    font-weight:600;
+}
+
+img {
+    width:100px;
+}
+
+#back {
+     margin-left:30px;  
+}
+
+p {
+    color: red;
+}
