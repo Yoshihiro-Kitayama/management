@@ -10,22 +10,38 @@
 
 <form action="{{ route('products.search') }}" method="GET">
     @csrf
+<div class="search">
+
     <!-- 商品名検索 -->
     <div class="search_product">
-        <input type="text" name="keyword" placeholder="検索キーワード">
+        <input type="text" class="search_box" name="keyword" placeholder="検索キーワード">
+    </div>
 
     <!-- メーカー名検索 -->
-        <input type="text" name="sort" list="company_id" placeholder="メーカー名">
+        <!-- <input type="text" name="sort" list="company_id" placeholder="メーカー名">
         <datalist id="company_id">
         <option value="Coka-cola"></option>
         <option value="サントリー"></option>
         <option value="キリン"></option>
-        </datalist>
-        
-        <input type="submit" value="検索">
+        </datalist> -->
+
+    <div class="search_company">
+        <select name="company_id" class="search_box">
+        <option value=""></option>
+        @foreach($companies as $company)
+            <option value="{{ $company->id }}">
+                {{ $company->company_name }}
+            </option>
+        @endforeach
+        </select>
     </div>
 
-</form>
+    <div>
+        <input type="submit" value="検索">
+    </div>
+    
+</div>
+    </form>
 
 <div class="links">
   <table class="table table-striped">

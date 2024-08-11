@@ -64,17 +64,35 @@ class Product extends Model
             ]);
         }
 
-        // 検索機能
-        public function SearchList($keyword) {
+        // 更新処理
+        public function updateProduct($request, $id, $image_path) {
+            
+            DB::table('products')->where('id', $id)->update([
+            // Product::where('id', $id)->update([
     
-           $products=DB::table('products')
-
-           ->join('companies', 'products.company_id', '=', 'companies.id')
-           ->select('products.*', 'companies.company_name as company_id')
-           ->where('product_name', 'like', "%$keyword%")
-           ->get();
-
-           return $products;
+                'product_name' => $request->product_name,
+                'img_path' => $image_path,
+                'price' => $request->price,
+                'stock' => $request->stock,
+                'company_id' => $request->company_id,
+                'comment' => $request->comment
+    
+            ]);
+            
         }
+
+        // 検索機能
+    public function searchList($keyword) {
+        
+        $products=DB::table('products')
+        
+        ->join('companies', 'products.company_id', '=', 'companies.id')
+        ->select('products.*', 'companies.company_name as company_id')
+        ->where('product_name', 'like', "%$keyword%")
+        ->get();
+        
+        return $products;
+    }
+    
     
 }

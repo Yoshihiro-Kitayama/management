@@ -7,7 +7,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <!-- <title>{{ config('app.name', 'Laravel') }}</title> -->
+    <title>@yield('title')</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -74,7 +75,6 @@
 
         <main class="py-4">
         <link rel="stylesheet" href="{{ asset('/css/style.css')  }}">
-        <script src="{{ asset('/js/main.js')  }}"></script>
             @yield('content')
         </main>
     </div>

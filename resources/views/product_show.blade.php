@@ -18,7 +18,7 @@
             <br>
             <div class="form-group">
                 <label for="image">商品画像</label>
-                <img src="{{ asset($product->img_path) }}" width="100px">
+                <img src="{{ asset($product->img_path) }}">
             </div>
             <br>
             <div class="form-group">
@@ -43,7 +43,7 @@
                 <br>
                 <div class="form-group">
                     <label for="comment">コメント</label>
-                    <textarea rows="2">{{ $product->comment }}</textarea>
+                    <textarea readonly rows="2">{{ $product->comment }}</textarea>
                 </div>
                 <br>
             <br>

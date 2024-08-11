@@ -8,9 +8,14 @@
     text-align: center;
 }
 
-.search_product {
+.search div {
     margin-left:20px;
 }
+
+.search_box {
+    width: 150px;
+    height: 30px;
+  }
 
 #product {
     border:1px solid black;
@@ -38,9 +43,13 @@ img {
 }
 
 #back {
-     margin-left:30px;  
+     margin-left:30px;
 }
 
 p {
     color: red;
+}
+
+.search {
+    display: flex;
 }

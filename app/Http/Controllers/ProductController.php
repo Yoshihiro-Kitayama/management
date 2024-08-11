@@ -107,22 +107,19 @@ class ProductController extends Controller
         $image_path = 'storage/images/' . $file_name;
 
         $model = new Product();
-            
-        // $product = $model->updateProduct($request, $id, $image_path);
 
 
-        Product::where('id', $id)->update([
+        DB::beginTransaction();
 
-        'product_name' => $request->product_name,
-        'img_path' => $image_path,
-        'price' => $request->price,
-        'stock' => $request->stock,
-        'company_id' => $request->company_id,
-        'comment' => $request->comment
-        
-    ]);
-    
-        return view('product_edit', compact('product', 'companies'));
+        try {
+         $model->updateProduct($request, $id, $image_path);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back();
+        }
+
+            return view('product_edit', compact('product', 'companies'));
 
     }
 
@@ -130,24 +127,33 @@ class ProductController extends Controller
 
         public function search(Request $request) {
 
+            $companies = Company::all();
+
             $keyword = $request->input('keyword');
 
             $product = new Product();
     
-            $products = $product->SearchList($keyword);
+            $products = $product->searchList($keyword);
            
     
-            return view('product_list', compact('products'));
+            return view('product_list', compact('products', 'companies'));
 
         }
-    
-    // 削除機能
-    public function destroy(Product $product) {
-        $companies = Company::all();
         
-        $product->delete();
-        return redirect()->route('products.list');
-            // ->with('success','削除しました');
-    }
+        // 削除機能
+        public function destroy(Product $product) {
+            $companies = Company::all();
+            
+            try {
+                $product->delete();
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollback();
+                return back();
+            }
+            
+            return redirect()->route('products.list');
+                // ->with('success','削除しました');
+        }
     
 }
