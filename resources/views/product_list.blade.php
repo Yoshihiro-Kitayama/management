@@ -17,14 +17,7 @@
         <input type="text" class="search_box" name="keyword" placeholder="検索キーワード">
     </div>
 
-    <!-- メーカー名検索 -->
-        <!-- <input type="text" name="sort" list="company_id" placeholder="メーカー名">
-        <datalist id="company_id">
-        <option value="Coka-cola"></option>
-        <option value="サントリー"></option>
-        <option value="キリン"></option>
-        </datalist> -->
-
+    <!-- メーカー名でソート -->
     <div class="search_company">
         <select name="company_id" class="search_box">
         <option value=""></option>

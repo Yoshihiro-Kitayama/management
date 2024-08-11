@@ -75,6 +75,7 @@
 
         <main class="py-4">
         <link rel="stylesheet" href="{{ asset('/css/style.css')  }}">
+        <script src="{{ asset('/js/main.js')  }}"></script>
             @yield('content')
         </main>
     </div>
