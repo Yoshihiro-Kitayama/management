@@ -20,7 +20,7 @@
             <br>
             <div class="form-group">
                 <label for="product_name">商品名<span>*</span></label>
-                <input type="text" id="product_name" name="product_name" value="{{ old('product_name') }}{{ $product->product_name }}">
+                <input type="text" id="product_name" name="product_name" value="{{ $product->product_name }}">
                 @if($errors->has('product_name'))
                         <p>{{ $errors->first('product_name') }}</p>
                     @endif
@@ -28,7 +28,7 @@
             <br>
             <div class="form-group">
                 <label for="company_id">メーカー名<span>*</span></label>
-                <select name="company_id" id="company_id" value="{{ old('company_id') }}">
+                <select name="company_id" id="company_id" value="">
                     <option value="">{{ $product->company->company_name }}</option>
                 @foreach($companies as $company)
                     <option value="{{ $company->id }}">
@@ -43,7 +43,7 @@
             <br>
             <div class="form-group">
                 <label for="price">価格<span>*</span></label>
-                <input type="text" id="price" name="price" value="{{ old('price') }}{{ $product->price }}">
+                <input type="text" id="price" name="price" value="{{ $product->price }}">
                 @if($errors->has('price'))
                         <p>{{ $errors->first('price') }}</p>
                     @endif
@@ -51,7 +51,7 @@
                 <br>
                 <div class="form-group">
                     <label for="stock">在庫数<span>*</span></label>
-                    <input type="text" id="stock" name="stock" value="{{ old('stock') }}{{ $product->stock }}">
+                    <input type="text" id="stock" name="stock" value="{{ $product->stock }}">
                     @if($errors->has('stock'))
                         <p>{{ $errors->first('stock') }}</p>
                     @endif
@@ -59,7 +59,7 @@
                 <br>
                 <div class="form-group">
                     <label for="comment">コメント</label>
-                    <textarea id="coment" name="comment" value="{{ old('coment') }}" rows="2">{{ $product->comment }}</textarea>
+                    <textarea id="coment" name="comment" value="" rows="2">{{ $product->comment }}</textarea>
                     @if($errors->has('comment'))
                         <p>{{ $errors->first('comment') }}</p>
                     @endif
@@ -70,6 +70,7 @@
                     商品画像
                     <label for="image"></label>
                     <img src="{{ asset($product->img_path) }}">
+                    <br><br>
                     <input type="file" class="form-control-file" id="image" name="image">
                 </div>
 
