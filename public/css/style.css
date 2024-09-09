@@ -8,8 +8,8 @@
     text-align: center;
 }
 
-.search div {
-    margin-left:20px;
+.search1 div, .search2 div {
+    margin:10px;
 }
 
 .search_box {
@@ -50,6 +50,17 @@ p {
     color: red;
 }
 
-.search {
+.search1 {
     display: flex;
 }
+.search2 {
+    display: flex;
+}
+
+
+
+/* 
+.blue-text {
+    color: blue;
+    font-weight: bold;
+} */

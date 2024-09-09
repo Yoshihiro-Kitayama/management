@@ -131,9 +131,17 @@ class ProductController extends Controller
 
             $keyword = $request->input('keyword');
 
+            $searchCompany = $request->input('search_company');
+
+            $min_price = $request->input('min_price');
+            $max_price = $request->input('max_price');
+
+            $min_stock = $request->input('min_stock');
+            $max_stock = $request->input('max_stock');
+
             $product = new Product();
     
-            $products = $product->searchList($keyword);
+            $products = $product->searchList($keyword, $searchCompany, $min_price, $max_price, $min_stock, $max_stock);
            
     
             return view('product_list', compact('products', 'companies'));

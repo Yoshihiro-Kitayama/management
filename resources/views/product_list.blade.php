@@ -8,9 +8,19 @@
      <h1 class="info">商品画像一覧</h1>
 </div>
 
-<form action="{{ route('products.search') }}" method="GET">
+<!-- <div>
+    <h2 id=idName>てすと</h2>
+    <button id="test">ボタン</button>
+</div> -->
+
+<!-- <br>
+<p>こんにちは！</p>
+<button>Go!</button>
+<br> -->
+
+<form action="{{ route('products.search') }}" method="GET" id="search_form">
     @csrf
-<div class="search">
+<div class="search1">
 
     <!-- 商品名検索 -->
     <div class="search_product">
@@ -19,21 +29,41 @@
 
     <!-- メーカー名でソート -->
     <div class="search_company">
-        <select name="company_id" class="search_box">
+        <select name="search_company" class="search_box">
         <option value=""></option>
         @foreach($companies as $company)
             <option value="{{ $company->id }}">
                 {{ $company->company_name }}
             </option>
-        @endforeach
+            @endforeach
         </select>
-    </div>
-
-    <div>
-        <input type="submit" value="検索">
     </div>
     
 </div>
+        
+    <div class="search2">
+
+        <!-- 価格（下限〜上限）検索用の入力欄 -->
+        <div class="search_price">
+            <input type="number" name="min_price" class="search_box" placeholder="最小価格" value="">
+        </div>
+        <div class="search_price">
+                <input type="number" name="max_price" class="search_box" placeholder="最大価格" value="">
+            </div>
+            
+            <!-- 在庫数（下限〜上限）検索用の入力欄 -->
+            <div class="search_stock">
+                <input type="text" name="min_stock" class="search_box" placeholder="最小在庫数" value="{{ request('min_stock') }}">
+            </div>
+            <div class="search_stock">
+                <input type="text" name="max_stock" class="search_box" placeholder="最大在庫数" value="{{ request('max_stock') }}">
+            </div>
+            
+            <div>
+                <input type="submit" id="search_btn" value="検索">
+            </div>
+        </div>
+    
     </form>
 
 <div class="links">
@@ -68,7 +98,7 @@
                 <form action="{{ route('products.destroy', $product->id) }}" method="post">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-danger" onclick='return confirm("削除しますか？")'>
+                    <button type="submit" id="delBtn" class="btn btn-sm btn-danger" onclick='return confirm("削除しますか？")'>
                         削除
                     </button>
                 </form>

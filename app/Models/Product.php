@@ -82,16 +82,37 @@ class Product extends Model
         }
 
         // 検索機能
-    public function searchList($keyword) {
+    public function searchList($keyword, $searchCompany, $min_price, $max_price, $min_stock, $max_stock) {
         
-        $products=DB::table('products')
+        $products = DB::table('products')
         
         ->join('companies', 'products.company_id', '=', 'companies.id')
-        ->select('products.*', 'companies.company_name as company_id')
-        ->where('product_name', 'like', "%$keyword%")
-        ->get();
+        ->select('products.*', 'companies.company_name as company_id');
+
+        if($keyword) {
+            $products->where('products.product_name', 'LIKE', "%".$keyword."%");
+        }
         
-        return $products;
+        if($searchCompany) {
+            $products->where('products.company_id', '=', $searchCompany);
+            }
+
+            //  価格下限〜上限
+            if($min_price) {
+                $products->where('products.price', '>=', $min_price);
+            }
+            if($max_price) {
+                $products->where('products.price', '<=', $max_price);
+            }
+            // 在庫数下限〜上限
+            if($min_stock) {
+                $products->where('products.stock', '>=', $min_stock);
+            }
+            if($max_stock) {
+                $products->where('products.stock', '<=', $max_stock);
+            }
+
+        return $products->get();
     }
     
     
