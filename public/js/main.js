@@ -1,17 +1,5 @@
 'use scrict';
 {
-    // $(() => {
-    //     $('button').click(() => {
-    //         // $('p').text('おはよう！');
-    //         // $('p').addClass('red-text');
-    //         $('p')
-    //         .text('おはよう！')
-    //         .addClass('blue-text');;
-    //     });
-    // });
-
-    
-    // -------ここから使う--------
 
     // 検索機能の非同期処理
     $(() => {
@@ -72,28 +60,5 @@
     //           });
     //         });
 
-    // -------ここまで使う--------
-    
 
-    // $("#search").on("click", function(){
-    //     e.preventDefault();
-    
-    // $.ajax({
-    //  type:"GET",
-    //  url:"{{ route('products.search') }}",
-    //  dataType: 'json',
-    // })
-    
-    // .done(function(json){
-    //     alert('ajax成功');
-    //  console.log(json);
-    // })
-    // .fail(function(){
-    //     alert('ajax失敗');
-    // })
-    // .always(function(){
-     
-    // });
-    // });
 }
-
