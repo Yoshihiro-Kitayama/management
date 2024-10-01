@@ -25,7 +25,7 @@ Route::get('/', function () {
 Auth::routes();
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/home', [App\Http\Controllers\ProductController::class, 'showList'])->name('products.list');
-Route::get('/', [App\Http\Controllers\ProductController::class, 'search'])->name('products.search');
+Route::get('/search', [App\Http\Controllers\ProductController::class, 'search'])->name('products.search');
 
 Route::get('/product_show/{id}', [App\Http\Controllers\ProductController::class, 'show'])->name('products.show');
 Route::get('/product_edit/{id}', [App\Http\Controllers\ProductController::class, 'edit'])->name('products.edit');

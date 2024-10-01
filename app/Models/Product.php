@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Kyslik\ColumnSortable\Sortable;
 use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
     use HasFactory;
-
+    
+    use Sortable;
+    
     protected $table = 'products';
 
     protected $primaryKey = 'id';
@@ -21,6 +24,12 @@ class Product extends Model
         'stock',
         'comment',
         'img_path'
+    ];
+
+    public $sortable = [
+        'id',
+        'price',
+        'stock'
     ];
 
     // public function getCompanyNameById() {
@@ -111,6 +120,7 @@ class Product extends Model
             if($max_stock) {
                 $products->where('products.stock', '<=', $max_stock);
             }
+            // $products->orderBy($sortColumn, $sortOrder);
 
         return $products->get();
     }

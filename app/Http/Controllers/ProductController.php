@@ -29,12 +29,14 @@ class ProductController extends Controller
         
         $products = $product->getList();
         $companies = $company->getListcompany();
-
+        
+        $products = Product::sortable()->get();
+        // return view('product_list', compact('products','companies','posts'));
         return view('product_list', compact('products','companies'));
 
     }
-
     
+   
     public function showRegistForm() {
         $companies = Company::all();
         return view('product_regist', ['companies' => $companies]);
@@ -126,6 +128,7 @@ class ProductController extends Controller
         // 検索機能
 
         public function search(Request $request) {
+            \Log::info($request);
 
             $companies = Company::all();
 
@@ -163,5 +166,6 @@ class ProductController extends Controller
             return redirect()->route('products.list');
                 // ->with('success','削除しました');
         }
+
     
 }

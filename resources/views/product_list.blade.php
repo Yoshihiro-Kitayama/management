@@ -8,16 +8,6 @@
      <h1 class="info">商品画像一覧</h1>
 </div>
 
-<!-- <div>
-    <h2 id=idName>てすと</h2>
-    <button id="test">ボタン</button>
-</div> -->
-
-<!-- <br>
-<p>こんにちは！</p>
-<button>Go!</button>
-<br> -->
-
 <form action="{{ route('products.search') }}" method="GET" id="search_form">
     @csrf
 <div class="search1">
@@ -27,7 +17,7 @@
         <input type="text" class="search_box" name="keyword" placeholder="検索キーワード">
     </div>
 
-    <!-- メーカー名でソート -->
+    
     <div class="search_company">
         <select name="search_company" class="search_box">
         <option value=""></option>
@@ -63,18 +53,18 @@
                 <input type="submit" id="search_btn" value="検索">
             </div>
         </div>
-    
+        
     </form>
-
-<div class="links">
+    
+<div id="search-results">
   <table class="table table-striped">
      <thead>
         <tr>
-            <th>ID</th>
+            <th>@sortablelink('id','ID')</th>
             <th>商品画像</th>
             <th>商品名</th>
-            <th>価格</th>
-            <th>在庫数</th>
+            <th>@sortablelink('price','価格')</th>
+            <th>@sortablelink('stock','在庫数')</th>
             <th>メーカー名</th>
             <th></th>
             <th><a href="{{ route('products.regist') }}" class="btn btn-warning">新規登録</a></th>
@@ -95,10 +85,10 @@
                 <a class="btn btn-primary" href="{{ route('products.show' , $product->id) }}">詳細</a>
             </td>
             <td>
-                <form action="{{ route('products.destroy', $product->id) }}" method="post">
+                <form action="{{ route('products.destroy', $product->id) }}" method="post" class="d-inline">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" id="delBtn" class="btn btn-sm btn-danger" onclick='return confirm("削除しますか？")'>
+                    <button type="submit" id="delBtn" class="btn btn-sm btn-danger btn-sm mx-1 delete-product" data-product-id="{{ $product->id }}" onclick="confirm('削除しますか？')">
                         削除
                     </button>
                 </form>
