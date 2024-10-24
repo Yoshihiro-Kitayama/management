@@ -34,5 +34,5 @@ Route::put('/product_edit/{id}', [App\Http\Controllers\ProductController::class,
 Route::get('/product_regist', [App\Http\Controllers\ProductController::class, 'showRegistForm'])->name('products.regist');
 Route::post('/product_regist', [App\Http\Controllers\ProductController::class, 'registSubmit'])->name('products.submit');
 
-
 Route::delete('/home/{product}', [App\Http\Controllers\ProductController::class, 'destroy'])->name('products.destroy');
+

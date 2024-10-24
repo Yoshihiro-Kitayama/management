@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Company; 
+use App\Models\Company;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,17 +26,17 @@ class ProductController extends Controller
 
         $product = new Product();
         $company = new Company();
-        
+
         $products = $product->getList();
         $companies = $company->getListcompany();
-        
+
         $products = Product::sortable()->get();
         // return view('product_list', compact('products','companies','posts'));
         return view('product_list', compact('products','companies'));
 
     }
-    
-   
+
+
     public function showRegistForm() {
         $companies = Company::all();
         return view('product_regist', ['companies' => $companies]);
@@ -44,24 +44,24 @@ class ProductController extends Controller
 
     // 新規登録
     public function registSubmit(ProductRequest $request) {
-        
+
         //①画像ファイルの取得
 	    $image = $request->file('image');
-        
+
         //②画像ファイルのファイル名を取得
         $file_name = $image->getClientOriginalName();
-        
+
         //③storage/app/public/imagesフォルダ内に、取得したファイル名で保存
         $image->storeAs('public/images', $file_name);
-        
+
         //④データベース登録用に、ファイルパスを作成
         $image_path = 'storage/images/' . $file_name;
-        
+
         $model = new Product();
-        
+
         // トランザクション開始
         DB::beginTransaction();
-        
+
         try {
             // 登録処理呼び出し
             $model->registProduct($request, $image_path);
@@ -70,11 +70,11 @@ class ProductController extends Controller
             DB::rollback();
             return back();
         }
-    
+
         // 処理が完了したらregistにリダイレクト
         return redirect(route('products.regist'));
     }
-    
+
     // 詳細ボタン押下時
     public function show($id) {
         $product = Product::find($id);
@@ -83,7 +83,7 @@ class ProductController extends Controller
 
         return view('product_show', compact('product','companies'));
     }
-    
+
     // 編集ボタン押下時
     public function edit($id) {
         $product = Product::find($id);
@@ -93,13 +93,13 @@ class ProductController extends Controller
         return view('product_edit', compact('product', 'companies'));
     }
 
-   
+
         // 更新
         public function update($id, ProductRequest $request){
         $companies = Company::all();
 
         $product = Product::find($id);
-    
+
         $image = $request->file('image');
 
         $file_name = $image->getClientOriginalName();
@@ -114,7 +114,7 @@ class ProductController extends Controller
         DB::beginTransaction();
 
         try {
-         $model->updateProduct($request, $id, $image_path);
+        $model->updateProduct($request, $id, $image_path);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -143,29 +143,23 @@ class ProductController extends Controller
             $max_stock = $request->input('max_stock');
 
             $product = new Product();
-    
+
             $products = $product->searchList($keyword, $searchCompany, $min_price, $max_price, $min_stock, $max_stock);
-           
-    
-            return view('product_list', compact('products', 'companies'));
+
+            // return view('product_list', compact('products', 'companies'));
+            return response()->json(['products' => $products]);
 
         }
-        
+
         // 削除機能
         public function destroy(Product $product) {
-            $companies = Company::all();
-            
+
             try {
                 $product->delete();
-                DB::commit();
+                return response()->json(['message' => '削除しました'], 200);
             } catch (\Exception $e) {
-                DB::rollback();
-                return back();
+                return response()->json(['error' => '削除に失敗しました'], 500);
             }
-            
-            return redirect()->route('products.list');
-                // ->with('success','削除しました');
         }
 
-    
 }

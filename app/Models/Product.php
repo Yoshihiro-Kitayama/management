@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\DB;
 class Product extends Model
 {
     use HasFactory;
-    
+
     use Sortable;
-    
+
     protected $table = 'products';
 
     protected $primaryKey = 'id';
@@ -49,7 +49,7 @@ class Product extends Model
 
         return $products;
     }
-       
+
     public function sales()
     {
         return $this->hasMany(Sale::class);

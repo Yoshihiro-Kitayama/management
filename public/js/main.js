@@ -1,158 +1,128 @@
 {
-    
-    // ソート機能のクリックイベント
-
-//     (function() {
-//     'use scrict';
-
-//     let ths = document.getElementsByTagName('th');
-//     let i;
-//     for (i = 0; i < ths.length; i++) {
-//         ths[i].addEventListener('click', function() {
-            
-//             // sort機能の処理
-//             let rows = Array.prototype.slice.call(document.querySelectorAll('tbody > tr'));
-//             // return;
-            
-//             rows.sort(function(a, b) {
-//                 let _a = a.children[col].textContent;
-//                 let _b = b.childr
-//                 en[col].textContent;
-//                 if (_a < _b){
-//                     return -1;
-//                 }
-//                 if (_a > _b) {
-//                     return 1;
-//                 }
-//                 return 0;
-//             });
-//             // console.log(rows);
-//             let tbody = document.querySelector('tbody');
-
-//             while (tbody.firstChild) {
-//                 tbody.removeChild(tbody.firstChild);
-//             }
-//         });
-//     }
-// })();
-
-//     <script>
-// $(function(){
-// $.ajax({
-// url: ‘ここに取得したいURLまたはディレクトリを入力’
-// }).done(function(data){
-// /* 通信成功時 */
-// }).fail(function(data){
-// /* 通信失敗時 */
-// }).always(function(data){
-// /* 通信成功・失敗問わず */
-// });
-// });
-// </script>
 
 // 検索処理の非道処理化
-    $(() => {
-        $("#search_btn").on("click", function(e){
+$(() => {
+    $("#search_btn").on("click", function(e){
             e.preventDefault();
 
-            // formの中身のデータを取得する場合はserializeを使う
-            // valは使わない
-            let formData = $('#search_form').serialize();
-            // let formData = "あいうえお";
-            // console.log(formData);
+            let formData = $('#search_form').serializeArray().reduce((obj, item) => {
+            obj[item.name] = item.value;
+            return obj;}, {});
 
-        $.ajax({
-        type:"GET",
-        // jsファイルで書く場合はこの書き方が使えない。
-        // bladeファイルに書く場合はルートを指定する書き方でもいい
-        // でも今回は別ファイル（jsファイル）を読み込んでるからダメ
-        url:"search",
-        data: formData,
-        dataType: 'html',
-        })
+            $.ajax({
+                url:"search",
+                data: formData,
+                dataType: 'json',
+                headers: {
+                    "X-Search-Condition": "your_search_condition" // ここで検索条件を追加
+                },
 
-        .done(function(data){
 
-            alert('ajax成功');
-        console.log(data);
-        // $('#search-results').empty();
-        })
-        .fail(function(){
-            alert('ajax失敗');
-        })
-        .always(function(){
-        
-        });
+            })
+            .done(function (data) {
+                alert('ajax成功');
+                console.log(data);
+                $('#search-results').empty();
 
-        });
-        
+                let newTableHtml ='<table class="table table-striped">' +
+                '<thead><tr>' +
+                '<th>ID</th>' +
+                '<th>商品画像</th>' +
+                '<th>商品名</th>' +
+                '<th>価格</th>' +
+                '<th>在庫数</th>' +
+                '<th>メーカー名</th>' +
+                '<th></th>' +
+                '<th><a href="/product_regist/"' + 'class="btn btn-warning">新規登録</a>' +
+                '</th>' +
+                '</tr></thead><tbody>';
+
+                        $.each(data.products, function (index, product) {
+                            newTableHtml += '<tr>' +
+                            '<td>' + product.id + '</td>' +
+                            '<td><img src="' + product.img_path + '" alt="商品画像"></td>' +
+                            '<td>' + product.product_name + '</td>' +
+                            '<td>' + product.price + '</td>' +
+                            '<td>' + product.stock + '</td>' +
+                            '<td>' + product.company_id + '</td>' +
+                            '<td>' +
+                            '<a href="/product_show/' + product.id + '" class="btn btn-primary">詳細</a>' +
+                            '<form method="POST" action="/home{product}/' + product.id + '" class="d-inline">' +
+                            '</td>' +
+                            '<td>' +
+                            '<button type="submit" class="btn btn-danger delete-product" data-product-id="' + product.id + '">削除</button>' +
+                            '</form>' +
+                            '</td>' +
+                            '</tr>';
+                        });
+
+                        newTableHtml += '</tbody></table>';
+
+                $('#productTable').hide();
+
+                $('#search-results').html(newTableHtml);
+
+            })
+
+                .fail(function(){
+                    alert('ajax失敗');
+                })
+
     });
 
+});
+
+ // ソート処理
+// $('table th a').on('click', function(e) {
+//     e.preventDefault();
+//     var sortColumn = $(this).data('column');
+//     var sortOrder = $(this).data('order');
+
+//     $.ajax({
+//       url: 'search',
+//       data: {
+//         // 検索条件に加えて、ソート条件も追加
+//         sortColumn: sortColumn,
+//         sortOrder: sortOrder,
+//         // ... (他の検索条件)
+//       },
+//       success: function(data) {
+//         // ... (既存のコード)
+//       },
+//       error: function() {
+//         alert('エラーが発生しました。');
+//       }
+//     });
+//   });
 
 
-    // 削除機能の非同期処理
+// 削除処理
+$(() => {
+    $('.delete-product').click(function(e) {
+        e.preventDefault();
 
-   
-    // $(() => {
-    //     $("#delBtn").on("click", function(e){
-    //         e.preventDefault();
+        if (confirm('本当に削除しますか？')) {
+            let form = $(this).closest('form');
+            let url = form.attr('action');
 
-    //         let deleteConfirm = confirm("削除しますか？");
-    //         if(deleteConfirm == true) {
-    //             let clickEle = $(this)
-    //             let userID = clickEle.attr('data-user-id');
-
-    //             $.ajax({
-    //                 url: '/user/' + userID,
-    //                 type: 'POST',
-    //                 data: {'id': userID,
-    //                        '_method': 'DELETE'} // DELETE リクエストだよ！と教えてあげる。
-    //               })
-            
-    //              .done(function() {
-    //                 // 通信が成功した場合、クリックした要素の親要素の <tr> を削除
-    //                 clickEle.parents('tr').remove();
-    //               })
-            
-    //              .fail(function() {
-    //                 alert('エラー');
-    //               });
-            
-    //             } else {
-    //               (function(e) {
-    //                 e.preventDefault()
-    //               });
-    //             };
-    //           });
-    //         });
-
-    // -------ここまで使う--------
-    
-    // $(() => {
-    //     $("#delBtn").on("click", function(e){
-    //         e.preventDefault();
-            
-    //         var productId = $(this).data('product-id');
-
-    //         if (confirm("削除しますか？")) {
-    //             $.ajax({
-    //                 type: 'POST',
-    //                 data:{'_method':'delete'},
-    //                 url: '/products/' + productId,
-    //                 headers: {
-    //                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    //                 },
-    //                 success: function (data) {
-    //                     // 削除された行を非表示にする
-    //                     $('tr[data-product-id="' + productId + '"]').hide();
-    //                     alert('削除しました。');
-    //                 },
-    //                 error: function (data) {
-    //                     alert('削除に失敗しました。');
-    //                 }
-    //             });
-    //         }
-    //     });
-    // });
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                data: form.serialize(),
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            })
+            .done(function(response) {
+                // 削除成功時の処理
+                form.closest('tr').remove();
+                alert('削除しました');
+            })
+            .fail(function(error) {
+                // 削除失敗時の処理
+                console.error(error);
+                alert('削除に失敗しました。');
+            });
+        }
+    });
+});
 
 }
