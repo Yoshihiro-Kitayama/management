@@ -75,33 +75,33 @@ class Product extends Model
 
         // 更新処理
         public function updateProduct($request, $id, $image_path) {
-            
+
             DB::table('products')->where('id', $id)->update([
             // Product::where('id', $id)->update([
-    
+
                 'product_name' => $request->product_name,
                 'img_path' => $image_path,
                 'price' => $request->price,
                 'stock' => $request->stock,
                 'company_id' => $request->company_id,
                 'comment' => $request->comment
-    
+
             ]);
-            
+
         }
 
         // 検索機能
-    public function searchList($keyword, $searchCompany, $min_price, $max_price, $min_stock, $max_stock) {
-        
+        public function searchList($keyword, $searchCompany, $min_price, $max_price, $min_stock, $max_stock, $sortColumn, $sortOrder) {
+
         $products = DB::table('products')
-        
+
         ->join('companies', 'products.company_id', '=', 'companies.id')
         ->select('products.*', 'companies.company_name as company_id');
 
         if($keyword) {
             $products->where('products.product_name', 'LIKE', "%".$keyword."%");
         }
-        
+
         if($searchCompany) {
             $products->where('products.company_id', '=', $searchCompany);
             }
@@ -120,10 +120,9 @@ class Product extends Model
             if($max_stock) {
                 $products->where('products.stock', '<=', $max_stock);
             }
-            // $products->orderBy($sortColumn, $sortOrder);
+            $products->orderBy($sortColumn, $sortOrder);
 
-        return $products->get();
+            return $products->orderBy($sortColumn, $sortOrder)->get();
     }
-    
-    
+
 }

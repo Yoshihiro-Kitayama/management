@@ -1,13 +1,34 @@
 {
 
-// 検索処理の非道処理化
+// 検索処理
 $(() => {
+
+    function applyTablesorter() {
+        $("#tableView").tablesorter({
+            headers: {
+                0: { sorter: true }, // ID
+                1: { sorter: false }, // 商品画像は無効
+                2: { sorter: false }, // 商品名は無効
+                3: { sorter: true }, // 価格
+                4: { sorter: true } , // 在庫数
+                5: { sorter: false } , // メーカー名は無効
+                6: { sorter: false } , // 空白無効
+                7: { sorter: false }  // 新規登録無効
+            }
+        });
+    }
+
+
     $("#search_btn").on("click", function(e){
             e.preventDefault();
 
             let formData = $('#search_form').serializeArray().reduce((obj, item) => {
             obj[item.name] = item.value;
             return obj;}, {});
+
+            formData.sort_column = $("#tableView th.sorted").data("column"); // 現在のソートカラムを取得
+            formData.sort_order = $("#tableView th.sorted").data("order"); // 現在のソート順を取得
+
 
             $.ajax({
                 url:"search",
@@ -17,25 +38,13 @@ $(() => {
                     "X-Search-Condition": "your_search_condition" // ここで検索条件を追加
                 },
 
-
             })
             .done(function (data) {
                 alert('ajax成功');
                 console.log(data);
-                $('#search-results').empty();
+                $('#search-results tbody').empty();
 
-                let newTableHtml ='<table class="table table-striped">' +
-                '<thead><tr>' +
-                '<th>ID</th>' +
-                '<th>商品画像</th>' +
-                '<th>商品名</th>' +
-                '<th>価格</th>' +
-                '<th>在庫数</th>' +
-                '<th>メーカー名</th>' +
-                '<th></th>' +
-                '<th><a href="/product_regist/"' + 'class="btn btn-warning">新規登録</a>' +
-                '</th>' +
-                '</tr></thead><tbody>';
+                let newTableHtml ='<table class="table table-striped">';
 
                         $.each(data.products, function (index, product) {
                             newTableHtml += '<tr>' +
@@ -56,44 +65,51 @@ $(() => {
                             '</tr>';
                         });
 
-                        newTableHtml += '</tbody></table>';
+                        newTableHtml += '</table>';
 
-                $('#productTable').hide();
+                        $('#search-results tbody').html(newTableHtml);
 
-                $('#search-results').html(newTableHtml);
+                        // 検索結果のテーブルに対してtablesorterを適用
+                        applyTablesorter();
 
-            })
+                        $("#tableView").trigger("update");
+                        $("#tableView").trigger("sortReset");
+                    })
 
                 .fail(function(){
                     alert('ajax失敗');
                 })
+            });
 
     });
 
-});
+    // ソート機能
+    $(() => {
 
- // ソート処理
-// $('table th a').on('click', function(e) {
-//     e.preventDefault();
-//     var sortColumn = $(this).data('column');
-//     var sortOrder = $(this).data('order');
+        $("#tableView").tablesorter({
+            headers: {
+                0: { sorter: true }, // ID
+                1: { sorter: false }, // 商品画像は無効
+                2: { sorter: false }, // 商品名は無効
+                3: { sorter: true }, // 価格
+                4: { sorter: true } , // 在庫数
+                5: { sorter: false } , // メーカー名は無効
+                6: { sorter: false } , // 空白無効
+                7: { sorter: false }  // 新規登録無効
+            },
 
-//     $.ajax({
-//       url: 'search',
-//       data: {
-//         // 検索条件に加えて、ソート条件も追加
-//         sortColumn: sortColumn,
-//         sortOrder: sortOrder,
-//         // ... (他の検索条件)
-//       },
-//       success: function(data) {
-//         // ... (既存のコード)
-//       },
-//       error: function() {
-//         alert('エラーが発生しました。');
-//       }
-//     });
-//   });
+        });
+
+        // ID、価格、在庫数押下時のクリックイベント
+        $("#tableView th").click(function() {
+            let $this = $(this);
+            let order = $this.data('order') === 'asc' ? 'desc' : 'asc';
+
+            $this.siblings().removeClass('sorted').removeAttr('data-order');
+            $this.addClass('sorted').data('order', order);
+
+        });
+    });
 
 
 // 削除処理
@@ -111,7 +127,7 @@ $(() => {
                 data: form.serialize(),
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             })
-            .done(function(response) {
+            .done(function() {
                 // 削除成功時の処理
                 form.closest('tr').remove();
                 alert('削除しました');

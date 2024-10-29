@@ -142,9 +142,15 @@ class ProductController extends Controller
             $min_stock = $request->input('min_stock');
             $max_stock = $request->input('max_stock');
 
+            // ソート情報取得
+            $allowedSortColumns = ['id', 'product_name', 'price', 'stock'];
+            $sortColumn = $request->input('sort_column', 'id');
+            $sortColumn = in_array($sortColumn, $allowedSortColumns) ? $sortColumn : 'id';
+            $sortOrder = $request->input('sort_order', 'asc');
+
             $product = new Product();
 
-            $products = $product->searchList($keyword, $searchCompany, $min_price, $max_price, $min_stock, $max_stock);
+            $products = $product->searchList($keyword, $searchCompany, $min_price, $max_price, $min_stock, $max_stock, $sortColumn, $sortOrder);
 
             // return view('product_list', compact('products', 'companies'));
             return response()->json(['products' => $products]);

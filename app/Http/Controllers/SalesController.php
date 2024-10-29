@@ -6,64 +6,45 @@ use Illuminate\Http\Request;
 use App\Http\Requests\SaleRequest;
 use App\Models\Product;
 use App\Models\Sale;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SalesController extends Controller
 {
-//     public function purchase(Request $request)
-// {
-//     // リクエストから必要なデータを取得する
-//     $productId = $request->input('product_id');
-//     $quantity = $request->input('quantity', 1);
 
-//     // データベースから対象の商品を検索・取得
-//     $product = Product::find($productId);
+    public function purchase(SaleRequest $request)
+    {
 
-//     // 商品が存在しない、または在庫が不足している場合のバリデーションを行う
-//     if (!$product) {
-//         return response()->json(['message' => '商品が存在しません'], 404);
-//     }
-//     if ($product->stock < $quantity) {
-//         return response()->json(['message' => '商品が在庫不足です'], 400);
-//     }
+        $validatedData = $request->validated();
 
-//     // 在庫を減少させる
-//     $product->stock -= $quantity;
-//     $product->save();
+        DB::beginTransaction();
+
+        try {
+
+        $product = Product::findOrFail($validatedData['product_id']);
 
 
-//     // Salesテーブルに商品IDと購入日時を記録する
-//     $sale = new Sale([
-//         'product_id' => $productId,
+        if ($product->stock < $validatedData['quantity'])
+        {
+            return response()->json(['message' => '商品が在庫不足です'], 400);
+        }
 
-//     ]);
+        $product->stock -= $validatedData['quantity'];
+        $product->save();
 
-//     $sale->save();
+        Sale::create([
+            'product_id' => $validatedData['product_id'],
 
-//     // レスポンスを返す
-//     return response()->json(['message' => '購入成功']);
-// }
+        ]);
 
+        DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('購入処理中にエラーが発生しました:', ['exception' => $e]);
+            return response()->json(['message' => '購入処理中にエラーが発生しました'], 500);
+        }
 
-public function purchase(SaleRequest $request)
-{
-    $validatedData = $request->validated();
-
-    $product = Product::findOrFail($validatedData['product_id']);
-
-    // 在庫確認と更新
-    if ($product->stock < $validatedData['quantity']) {
-        return response()->json(['message' => '商品が在庫不足です'], 400);
+        return response()->json(['message' => '購入成功']);
     }
-    $product->stock -= $validatedData['quantity'];
-    $product->save();
-
-    // Salesモデルに直接作成
-    Sale::create([
-        'product_id' => $validatedData['product_id'],
-        // その他必要なカラムがあれば追加
-    ]);
-
-    return response()->json(['message' => '購入成功']);
-}
 
 }
