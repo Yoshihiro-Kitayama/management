@@ -143,7 +143,7 @@ class ProductController extends Controller
             $max_stock = $request->input('max_stock');
 
             // ソート情報取得
-            $allowedSortColumns = ['id', 'product_name', 'price', 'stock'];
+            $allowedSortColumns = ['id', 'price', 'stock'];
             $sortColumn = $request->input('sort_column', 'id');
             $sortColumn = in_array($sortColumn, $allowedSortColumns) ? $sortColumn : 'id';
             $sortOrder = $request->input('sort_order', 'asc');
