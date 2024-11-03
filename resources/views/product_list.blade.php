@@ -72,7 +72,7 @@
                         <th><a href="{{ route('products.regist') }}" class="btn btn-warning">新規登録</a></th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="productTableBody">
                     @foreach ($products as $product)
                     <tr>
                         <td>{{ $product->id }}</td>

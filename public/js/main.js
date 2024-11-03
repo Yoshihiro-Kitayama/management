@@ -114,22 +114,22 @@ $(() => {
 
 // 削除処理
 $(() => {
-    $('.delete-product').click(function(e) {
+    $(document).on('click', '.delete-product', function(e) {
         e.preventDefault();
 
+        const $button = $(this);
+        const productId = $button.data('product-id');
+
         if (confirm('本当に削除しますか？')) {
-            let form = $(this).closest('form');
-            let url = form.attr('action');
 
             $.ajax({
-                url: url,
+                url: `/home/${productId}`,
                 type: 'DELETE',
-                data: form.serialize(),
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             })
             .done(function() {
                 // 削除成功時の処理
-                form.closest('tr').remove();
+                $button.closest('tr').remove();
                 alert('削除しました');
             })
             .fail(function(error) {

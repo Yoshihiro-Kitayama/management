@@ -16,6 +16,7 @@ class SalesController extends Controller
 
         $validatedData = $request->validated();
 
+        // トランザクション開始
         DB::beginTransaction();
 
         try {
