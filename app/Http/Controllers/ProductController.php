@@ -30,7 +30,8 @@ class ProductController extends Controller
         $products = $product->getList();
         $companies = $company->getListcompany();
 
-        $products = Product::sortable()->get();
+        // sortableは使わなくなった
+        // $products = Product::sortable()->get();
         // return view('product_list', compact('products','companies','posts'));
         return view('product_list', compact('products','companies'));
 
